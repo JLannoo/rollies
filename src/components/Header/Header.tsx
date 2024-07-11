@@ -13,10 +13,10 @@ export default function Header(props: HeaderProps) {
 
 			<div className={style.links}>
 				<button>
-					<img src="/img/info.svg" />
+					<img src="./img/info.svg" />
 				</button>
 				<a href="https://github.com/jlannoo/rollies" target="_blank" rel="noreferrer">
-					<img src="/img/github.svg" />
+					<img src="./img/github.svg" />
 				</a>
 			</div>
 		</div>
