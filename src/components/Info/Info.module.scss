@@ -1,0 +1,35 @@
+@use "./src/styles/colors.module.scss" as colors;
+
+.info {
+	display: flex;
+	flex: 1 1 auto;
+	align-items: center;
+	flex-direction: column;
+
+	width: 100%;
+	max-width: 80ch;
+	height: 100dvh;
+
+	padding: 2rem;
+	box-sizing: border-box;
+	
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	font-family: "Text", sans-serif;
+	font-size: 1.2rem;
+	font-weight: 600;
+	color: colors.$text-mid-dark;
+
+	code {
+		background-color: rgba(0, 0, 0, 0.5);
+		padding: 0.25rem 0.5rem;
+		border-radius: 0.25rem;
+
+		font-family: "Text", sans-serif;
+		font-size: 1rem;
+		font-weight: 400;
+	}
+
+	
+}

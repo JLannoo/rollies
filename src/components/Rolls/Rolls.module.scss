@@ -1,0 +1,83 @@
+@use "./src/styles/colors.module.scss" as colors;
+
+.rolls {
+	display: flex;
+	flex: 1 1 auto;
+	align-items: center;
+	flex-direction: column;
+
+	width: 100%;
+	height: 100dvh;
+	
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.roll {
+	display: flex;
+	gap: 1rem;
+	width: 95%;
+	padding: 1rem;
+
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
+	
+	font-weight: 100;
+
+	animation: appear 0.5s ease forwards;
+
+	&:first-child {
+		margin-top: auto;
+	}
+
+	.total {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+
+		h2 {
+			font-size: 3.5rem;
+			margin: 0;
+
+			background: linear-gradient(145deg, colors.$gradient-accent-colors);
+			-webkit-background-clip: text;
+			background-clip: text;
+			-webkit-text-fill-color: transparent;
+		}
+	}
+
+	.info {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+
+		sub {
+			font-size: 1.2rem;
+			color: colors.$text-mid;
+			margin: 0;
+		}
+
+		p {
+			font-size: 1.5rem;
+			margin: 0;
+		}
+
+		.critical {
+			color: rgb(126, 237, 126);
+		}
+
+		.fail {
+			color: rgb(234, 99, 99);
+		}
+	}
+}
+
+@keyframes appear {
+	from {
+		opacity: 0;
+		transform: translateX(100%);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}	
+} 

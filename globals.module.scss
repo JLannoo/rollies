@@ -1,0 +1,29 @@
+@use "./src/styles/colors.module.scss" as colors;
+
+body, html {
+  margin: 0;
+  padding: 0;
+
+  font-family: 'Blocky', sans-serif;
+}
+
+body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+	height: 100dvh;
+
+	background-color: colors.$background-dark;
+	color: colors.$text-main;
+}
+
+main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	width: 100%;
+	height: 100%;
+	max-height: 100dvh;
+}
