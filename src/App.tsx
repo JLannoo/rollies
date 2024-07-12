@@ -1,7 +1,7 @@
-import { FormEventHandler } from "react";
+import { FormEventHandler, useState } from "react";
 
-import { Lexer } from "./parser/lexer";
-import { Parser } from "./parser/parser";
+import { IllegalTokenError, Lexer } from "./parser/lexer";
+import { InvalidExpressionError, Parser } from "./parser/parser";
 import { Evaluator } from "./parser/evaluator";
 
 import { toast, ToastContainer } from "react-toastify";
@@ -14,6 +14,8 @@ import Input from "./components/Input/Input";
 import { useRollsStore } from "./stores/rolls";
 
 export default function App() {
+	const [ error, setError ] = useState<InvalidExpressionError|IllegalTokenError>();
+
 	const addResult = useRollsStore((state) => state.addResult);
 
 	const submitHandler: FormEventHandler<HTMLFormElement> = (e) => {
@@ -23,10 +25,8 @@ export default function App() {
 		const object = Object.fromEntries(formData);
 
 		try {
-			const tokens = new Lexer(object.input.toString()).tokenize();			
+			const tokens = new Lexer(object.input.toString()).tokenize();
 			const ast = new Parser(tokens).parse();
-			console.log(ast);
-			
 			const values = new Evaluator(ast).evaluate();
 
 			if (!values) {
@@ -38,9 +38,15 @@ export default function App() {
 				formula: object.input.toString(),
 				result: values,
 			});
-		} catch (error: any) {
-			toast.error(error.message);
-			return;
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				if(error instanceof InvalidExpressionError) {
+					setError(error);
+				} else if(error instanceof IllegalTokenError) {
+					setError(error);
+				}
+				toast.error(error.message);
+			}
 		}
 	};
 
@@ -48,7 +54,7 @@ export default function App() {
 		<>
 			<Header title="Rollies" />
 			<Rolls />
-			<Input onSubmit={submitHandler} />
+			<Input onSubmit={submitHandler} error={error} cleanup={() => setError(undefined)}/>
 
 			<ToastContainer
 				position="top-right"

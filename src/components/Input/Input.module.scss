@@ -54,4 +54,53 @@
 			background-position-y: 100%;	
 		}
 	}
+
+	.inputContainer {
+		position: relative;
+		display: flex;
+		flex: 1 1 auto;
+
+		.errorOverlay {
+			display: flex;
+			align-items: center;
+
+			position: absolute;
+			top: 2px;
+			bottom: 2px;
+			left: 2px;
+
+			width: min-content;
+
+			padding: 0.5rem;
+			padding-right: 0px;
+
+			background-color: colors.$background-dark;
+			color: colors.$text-main;
+
+			border-radius: 0.5rem;
+	
+			font-size: 1.5rem;
+			font-family: "Blocky", sans-serif;
+			font-weight: 100;
+
+			.error {
+				text-decoration: underline;
+				color: colors.$color-accent-primary;
+
+				animation: shake 0.5s forwards;
+
+				@keyframes shake {
+					0%, 100% {
+						transform: translateX(0);
+					}
+					10%, 30%, 50%, 70%, 90% {
+						transform: translateX(-1px);
+					}
+					20%, 40%, 60%, 80% {
+						transform: translateX(1px);
+					}
+				}
+			}
+		}
+	}
 }
