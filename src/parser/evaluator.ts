@@ -1,6 +1,13 @@
 import { BinaryExpression, Expression, NumberLiteral, Program, UnaryExpression } from "./parser";
 import { Operator } from "./token";
 
+class UnknownOperatorError extends Error {
+	constructor(operator: Operator) {
+		super(`Unknown operator: ${operator}`);
+		this.name = "UnknownOperatorError";
+	}
+}
+
 class EvaluatingError extends Error {
 	constructor(message: string) {
 		super(message);
@@ -103,7 +110,7 @@ export class Evaluator {
 		case "K":
 			throw new Error("'K' operator not implemented");
 		default:
-			throw new Error(`Unknown operator: ${node.operator}`);
+			throw new UnknownOperatorError(node.operator);
 		}
 	}
 
@@ -121,7 +128,7 @@ export class Evaluator {
 			sorted = operand.dice.sort((a, b) => b.roll - a.roll);
 			break;
 		default:
-			throw new Error(`Unknown operator: ${operator}`);
+			throw new UnknownOperatorError(operator);
 		}
 
 		return {
@@ -213,7 +220,7 @@ export class Evaluator {
 			value = (left.sum as number) - (right.sum as number);
 			break;
 		default:
-			throw new Error(`Unknown operator: ${node.operator}`);
+			throw new UnknownOperatorError(node.operator);
 		}
 
 		return {

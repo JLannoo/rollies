@@ -1,9 +1,12 @@
 import { Operator, TOKENS, type Token } from "./token";
 
-class InvalidExpressionError extends Error {
-	constructor(message: string) {
-		super(message);
+export class InvalidExpressionError extends Error {
+	position: number;
+
+	constructor(token: Token) {
+		super(`Invalid expression: '${token.value}' at position ${token.position}`);
 		this.name = "InvalidExpressionError";
+		this.position = token.position;
 	}
 }
 
@@ -125,8 +128,7 @@ export class Parser {
 		const number = parseInt(this.currentToken.value as string);
 
 		if (isNaN(number)) {
-			this.errors.push(`Could not parse ${this.currentToken.value} as number`);
-			return {} as NumberLiteral;
+			throw new Error(`Could not parse ${this.currentToken.value} as number`);
 		}
 
 		return {
@@ -202,7 +204,7 @@ export class Parser {
 
 
 		if(!leftExp && this.currentToken.type !== TOKENS.EOF) {
-			throw new InvalidExpressionError(`Invalid expression '${this.currentToken.value}' at position ${this.currentToken.position}`);
+			throw new InvalidExpressionError(this.currentToken);
 		}
 
 		return leftExp;

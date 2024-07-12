@@ -1,8 +1,12 @@
 import { TOKENS, Token, WHITESPACE } from "./token";
 
-class IllegalTokenError extends Error {
+export class IllegalTokenError extends Error {
+	position: number;
+
 	constructor(token: Token) {
 		super(`Illegal token: '${token.value}' at position ${token.position}`);
+		this.name = "IllegalTokenError";
+		this.position = token.position;
 	}
 }
 
