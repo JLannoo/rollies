@@ -18,6 +18,7 @@ class EvaluatingError extends Error {
 export type Die = {
 	sides: number;
 	roll: number;
+	discarded?: boolean;
 }
 
 export type ExplodedDie = Die & {
@@ -25,19 +26,18 @@ export type ExplodedDie = Die & {
 	dice: Die[];
 }
 
-export interface Result {
+export interface RollResult {
 	type: string;
 	sum: number;
-	dice?: Die[] | ExplodedDie[];
+	dice: Die[] | ExplodedDie[];
+	discarded?: Die[] | ExplodedDie[];
 }
 
-export interface RollResult extends Result {
-	type: "RollResult";
-	sum: number;
-	dice: Die[];
+export interface NumberLiteralResult extends RollResult {
+	type: "NumberLiteralResult";
 }
 
-export interface ArithmeticResult extends Result {
+export interface ArithmeticResult extends RollResult {
 	type: "ArithmeticResult";
 	sum: number;
 }
@@ -53,7 +53,7 @@ export class Evaluator {
 	}
 
 	evaluate() {
-		let results: Result | null = null;
+		let results: RollResult | null = null;
 
 		while(this.position < this.program.length) {
 			const node = this.program[this.position];
@@ -65,7 +65,7 @@ export class Evaluator {
 		return results;
 	}
 
-	private evaluateNode(node: Expression): Result {
+	private evaluateNode(node: Expression): RollResult {
 		switch (node.type) {
 		case "UnaryExpression":
 			return this.evaluateUnaryExpression(node as UnaryExpression);
@@ -78,7 +78,7 @@ export class Evaluator {
 		}
 	}
 
-	private evaluateUnaryExpression(node: UnaryExpression): Result {
+	private evaluateUnaryExpression(node: UnaryExpression): RollResult {
 		if(!node.operand) {
 			throw new EvaluatingError(`Invalid unary expression: ${node?.toString()}`);
 		}
@@ -94,7 +94,7 @@ export class Evaluator {
 		}
 	}
 
-	private evaluateBinaryExpression(node: BinaryExpression): Result {
+	private evaluateBinaryExpression(node: BinaryExpression): RollResult {
 		if(!node.left || !node.right) {
 			throw new EvaluatingError(`Invalid binary expression: ${node?.toString()}`);
 		}
@@ -121,34 +121,34 @@ export class Evaluator {
 		}
 	}
 
-	private evaluateSort(operand: Result, operator: Operator): Result {
-		if(!operand.dice?.length) {
+	private evaluateSort(operand: RollResult, operator: Operator): RollResult {
+		if(!operand.dice.length) {
 			throw new EvaluatingError(`Operand of ${operator} operator must be a roll result`);
 		}
 
-		let sorted;
 		switch (operator) {
 		case "s":
-			sorted = operand.dice.sort((a, b) => a.roll - b.roll);
+			operand.dice.sort((a, b) => a.roll - b.roll);
 			break;
 		case "sl":
-			sorted = operand.dice.sort((a, b) => b.roll - a.roll);
+			operand.dice.sort((a, b) => b.roll - a.roll);
 			break;
 		default:
 			throw new UnknownOperatorError(operator);
 		}
 
 		return {
-			type: "RollResult",
-			sum: sorted.reduce((acc, die) => acc + die.roll, 0),
-			dice: sorted,
+			type: "Result",
+			sum: operand.dice.reduce((acc, die) => acc + die.roll, 0),
+			dice: operand.dice,
 		};
 	}
 
-	private evaluateNumberExpression(node: NumberLiteral): Result {
+	private evaluateNumberExpression(node: NumberLiteral): NumberLiteralResult {
 		return { 
-			type: "NumberLiteral",
+			type: "NumberLiteralResult",
 			sum: node.value,
+			dice: [],
 		};
 	}
 
@@ -170,8 +170,8 @@ export class Evaluator {
 			});
 		}
 
-		return { 
-			type: "RollResult",
+		return {
+			type: "Result",
 			sum: dice.reduce((acc, die) => acc + die.roll, 0),
 			dice, 
 		};
@@ -186,26 +186,25 @@ export class Evaluator {
 			throw new EvaluatingError(`Cannot keep ${count} highest dice from ${dice.length} dice`);
 		}
 
-		let sorted;
-
 		switch (operator) {
 		case TOKENS.KEEP:
 		case TOKENS.KEEP_HIGHEST:
-			sorted = dice.sort((a, b) => b.roll - a.roll);
+			dice.sort((a, b) => b.roll - a.roll);
 			break;
 		case TOKENS.KEEP_LOWEST:
-			sorted = dice.sort((a, b) => a.roll - b.roll);
+			dice.sort((a, b) => a.roll - b.roll);
 			break;
 		default:
 			throw new Error(`Unknown operator: ${operator}`);
 		}
 		
-		const kept = sorted.slice(0, count);
+		const kept = dice.slice(0, count);
 
 		return {
-			type: "RollResult",
+			type: "Result",
 			sum: kept.reduce((acc, die) => acc + die.roll, 0),
 			dice: kept,
+			discarded: dice.slice(count).map((die) => { die.discarded = true; return die; }),
 		};
 	}
 

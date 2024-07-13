@@ -1,9 +1,9 @@
-import { Result } from "@/parser/evaluator";
+import { RollResult } from "@/parser/evaluator";
 import { create } from "zustand";
 
 export type Roll = {
 	formula: string;
-	result: Result;
+	result: RollResult;
 };
 
 type RollsStore = {
