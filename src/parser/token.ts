@@ -14,7 +14,8 @@ export const TOKENS = {
 
 	// Operators
 	ROLL: "d",
-	EXPLODE: "K",
+	EXPLODE_AND_KEEP: "K",
+	EXPLODE: "e",
 	KEEP: "k",
 	KEEP_HIGHEST: "kh",
 	KEEP_LOWEST: "kl",
@@ -35,6 +36,7 @@ export type Operator =
 	typeof TOKENS.PLUS | 
 	typeof TOKENS.MINUS | 
 	typeof TOKENS.KEEP | 
+	typeof TOKENS.EXPLODE_AND_KEEP |
 	typeof TOKENS.EXPLODE |
 	typeof TOKENS.KEEP_HIGHEST |
 	typeof TOKENS.KEEP_LOWEST |

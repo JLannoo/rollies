@@ -62,8 +62,8 @@ export class Lexer {
 			token = { position: this.position, type: TOKENS.ROLL, value: this.char };
 			break;
 
-		case TOKENS.EXPLODE:
-			token = { position: this.position, type: TOKENS.EXPLODE, value: this.char };
+		case TOKENS.EXPLODE_AND_KEEP:
+			token = { position: this.position, type: TOKENS.EXPLODE_AND_KEEP, value: this.char };
 			break;
 
 		case TOKENS.KEEP:

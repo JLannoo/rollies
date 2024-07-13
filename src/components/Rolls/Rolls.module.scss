@@ -62,11 +62,35 @@
 		}
 
 		.critical {
-			color: rgb(126, 237, 126);
+			color: colors.$critical-green;
 		}
 
 		.fail {
-			color: rgb(234, 99, 99);
+			color: colors.$fail-red;
+		}
+
+		.exploded {
+			:first-child {
+				position: relative;
+				
+				&::after {
+					content: "";
+					position: absolute;
+	
+					width: 200%;
+					height: 100%;
+					top: -80%;
+					left: -50%;
+
+					background-image: url("./img/exploded.svg");
+					background-size: contain;
+					background-repeat: no-repeat;
+					background-position: center;
+
+
+					z-index: -1;
+				}
+			}
 		}
 	}
 }

@@ -58,7 +58,7 @@ const PRECEDENCE: { [key: string]: number } = {
 	[TOKENS.PLUS]: 2,
 	[TOKENS.MINUS]: 2,
 
-	[TOKENS.EXPLODE]: 3,
+	[TOKENS.EXPLODE_AND_KEEP]: 3,
 	[TOKENS.KEEP]: 3,
 	[TOKENS.KEEP_HIGHEST]: 3,
 	[TOKENS.KEEP_LOWEST]: 3,
@@ -97,6 +97,7 @@ export class Parser {
 		this.infixParseFns = {
 			[TOKENS.ROLL]: this.parseBinaryExpression,
 			[TOKENS.EXPLODE]: this.parseBinaryExpression,
+			[TOKENS.EXPLODE_AND_KEEP]: this.parseBinaryExpression,
 			[TOKENS.KEEP]: this.parseBinaryExpression,
 			[TOKENS.KEEP_HIGHEST]: this.parseBinaryExpression,
 			[TOKENS.KEEP_LOWEST]: this.parseBinaryExpression,

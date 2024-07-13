@@ -1,5 +1,5 @@
 import { BinaryExpression, Expression, NumberLiteral, Program, UnaryExpression } from "./parser";
-import { Operator } from "./token";
+import { Operator, TOKENS } from "./token";
 
 class UnknownOperatorError extends Error {
 	constructor(operator: Operator) {
@@ -20,10 +20,15 @@ export type Die = {
 	roll: number;
 }
 
+export type ExplodedDie = Die & {
+	exploded: boolean;
+	dice: Die[];
+}
+
 export interface Result {
 	type: string;
 	sum: number;
-	dice?: Die[];
+	dice?: Die[] | ExplodedDie[];
 }
 
 export interface RollResult extends Result {
@@ -98,17 +103,19 @@ export class Evaluator {
 		const right = this.evaluateNode(node.right);
 
 		switch (node.operator) {
-		case "+":
-		case "-":
+		case TOKENS.PLUS:
+		case TOKENS.MINUS:
 			return this.evaluateArithmetic(node);
-		case "d":
+		case TOKENS.ROLL:
 			return this.evaluateRoll(right.sum as number, left.sum as number);
-		case "k":
-		case "kh":
-		case "kl":
+		case TOKENS.KEEP:
+		case TOKENS.KEEP_HIGHEST:
+		case TOKENS.KEEP_LOWEST:
 			return this.evaluateKeep(left.dice as Die[], right.sum as number, node.operator);
-		case "K":
-			throw new Error("'K' operator not implemented");
+		case TOKENS.EXPLODE_AND_KEEP:
+			return this.evaluateExplodeAndKeep(left.dice as Die[], right.sum as number);
+		case TOKENS.EXPLODE:
+			throw new Error(`${TOKENS.EXPLODE} operator not implemented`);
 		default:
 			throw new UnknownOperatorError(node.operator);
 		}
@@ -182,11 +189,11 @@ export class Evaluator {
 		let sorted;
 
 		switch (operator) {
-		case "k":
-		case "kh":
+		case TOKENS.KEEP:
+		case TOKENS.KEEP_HIGHEST:
 			sorted = dice.sort((a, b) => b.roll - a.roll);
 			break;
-		case "kl":
+		case TOKENS.KEEP_LOWEST:
 			sorted = dice.sort((a, b) => a.roll - b.roll);
 			break;
 		default:
@@ -200,6 +207,40 @@ export class Evaluator {
 			sum: kept.reduce((acc, die) => acc + die.roll, 0),
 			dice: kept,
 		};
+	}
+
+	private evaluateExplodeAndKeep(dice: Die[], count: number): RollResult {
+		if(!dice?.length) {
+			throw new EvaluatingError(`Left side of ${TOKENS.EXPLODE_AND_KEEP} operator must be a roll result`);
+		}
+
+		if (count <= 0) {
+			throw new EvaluatingError(`Invalid explode count: ${count}`);
+		}
+
+		if (count > dice.length) {
+			throw new EvaluatingError(`Cannot explode and keep ${count} highest dice from ${dice.length} dice`);
+		}
+
+		for(let i=0; i<dice.length; i++) {
+			const die = dice[i];
+
+			if(die.roll == die.sides) {
+				let roll = die.roll;
+				const newDice: Die[] = [ { sides: die.sides, roll } ];
+			
+				while(roll === die.sides) {
+					roll = this.evaluateRoll(die.sides, 1).dice[0].roll;
+					die.roll += roll;
+					newDice.push({ sides: die.sides, roll });
+				}
+
+				const newDie = { sides: die.sides, roll: die.roll, exploded: true, dice: newDice };
+				dice[i] = newDie;
+			}
+		}
+
+		return this.evaluateKeep(dice, count, TOKENS.KEEP_HIGHEST);
 	}
 
 	private evaluateArithmetic(node: BinaryExpression): ArithmeticResult {
