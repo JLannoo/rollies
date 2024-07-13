@@ -30,4 +30,5 @@ export default function Info() {
 function copyFormulaToInput(formula: string) {
 	const input = document.getElementById("input") as HTMLInputElement;
 	input.value = formula;
+	input.focus();
 }

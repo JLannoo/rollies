@@ -3,7 +3,7 @@ import styles from "./Rolls.module.scss";
 
 import { type Roll, useRollsStore } from "@/stores/rolls";
 import Info from "../Info/Info";
-import { ExplodedDie, type Die } from "@/parser/evaluator";
+import { type Die } from "@/parser/evaluator";
 
 export default function Rolls() {
 	const rolls = useRollsStore((state) => state.rolls);
@@ -41,30 +41,54 @@ function Roll({ roll }: RollProps) {
 			<div className={styles.info}>
 				<sub>{roll.formula}</sub>	
 				<p>{
-					roll.result.dice?.map((die, index) => 
-						<React.Fragment key={index}>
-							<Die die={die} />
-							{index !== (roll.result.dice?.length ?? 0)  - 1 && ", "}
-						</React.Fragment>)
+					<>
+						{
+							roll.result.dice.map((die, index) =>
+								<React.Fragment key={index}>
+									<Die die={die} />
+									{index !== (roll.result.dice.length ?? 0)  - 1 && ", "}
+								</React.Fragment>)
+						}
+						&nbsp;
+						<span className={styles.discarded} title="Discarded dice">
+							{roll.result.discarded?.map((die, index) =>
+								<React.Fragment key={index}>
+									<Die die={die} />
+									{index !== (roll.result.discarded?.length ?? 0) - 1 && ", "}
+								</React.Fragment>)
+							}
+						</span>
+					</>
 				}</p>
 			</div>
 		</div>
 	);
 }
 
-function Die({ die }: { die: Die | ExplodedDie }) {
+function Die({ die }: { die: Roll["result"]["dice"][number] }) {
 	const isCritical = die.roll === die.sides;
 	const isFail = die.roll === 1;
+	const isExploded = "exploded" in die;
+	const isDiscarded = die.discarded;
 
 	const dice = "dice" in die ? die.dice : undefined;
+
+	const title = [
+		isCritical ? "Critical" : "",
+		isFail ? "Fail" : "",
+		isExploded ? "Exploded" : "",
+		isDiscarded ? "Discarded" : "",
+	].filter((t) => t).join(", ");
 
 	return (
 		<span
 			className={`
 				${isCritical ? styles.critical : ""}
 				${isFail ? styles.fail : ""}
-				${"exploded" in die ? styles.exploded : ""}
+				${isExploded ? styles.exploded : ""}
+				${isDiscarded ? styles.discarded : ""}
 			`.trim()}
+			title={title}
 		>
 			<span>{die.roll}</span>
 			&nbsp;

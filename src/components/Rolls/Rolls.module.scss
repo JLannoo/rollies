@@ -69,6 +69,10 @@
 			color: colors.$fail-red;
 		}
 
+		.discarded {
+			color: colors.$discarded-gray;
+		}
+
 		.exploded {
 			:first-child {
 				position: relative;
