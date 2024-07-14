@@ -73,18 +73,19 @@
 			color: colors.$discarded-gray;
 		}
 
-		.exploded {
+		.exploded:not(.discarded) {
 			:first-child {
 				position: relative;
+				text-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.5);
 				
 				&::after {
 					content: "";
 					position: absolute;
 	
-					width: 200%;
-					height: 100%;
-					top: -80%;
-					left: -50%;
+					width: 220%;
+					height: 120%;
+					top: -10%;
+					left: -55%;
 
 					background-image: url("./img/exploded.svg");
 					background-size: contain;

@@ -4,13 +4,14 @@ $background-darkest: #0c0c14;
 
 $color-accent-primary: #ff40af;
 $color-accent-secondary: #ffffb2;
+$color-accent-orange: #ff9f40;
 
 $text-main: #ddd;
 $text-mid: #aaa;
 $text-mid-dark: #667;
 $text-dark: #222;
 
-$gradient-accent-colors: $color-accent-secondary 20%, #ffb855 45%, $color-accent-primary 85%;
+$gradient-accent-colors: $color-accent-secondary 20%, $color-accent-orange 45%, $color-accent-primary 85%;
 
 $critical-green: #7eed7e;
 $fail-red: #ea6363;
