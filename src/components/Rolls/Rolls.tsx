@@ -31,9 +31,22 @@ type RollProps = {
 	index: number;
 };
 
-function Roll({ roll }: RollProps) {
+function Roll({ roll, index }: RollProps) {
+	const [ deleting, setDeleting ] = React.useState(false);
+	const del = useRollsStore((state) => state.deleteResult);
+
+	const ANIMATION_DURATION = 250;
+
+	function playDeleteAnimation() {
+		setDeleting(true);
+		setTimeout(() => { del(index); }, ANIMATION_DURATION);
+	}
+
 	return (
-		<div className={styles.roll}>
+		<div className={styles.roll}
+			data-deleting={deleting}
+			style={{ animationDuration: `${ANIMATION_DURATION}ms` }}
+		>
 			<div className={styles.total}>
 				<h2>{roll.result.sum}</h2>
 			</div>
@@ -42,12 +55,11 @@ function Roll({ roll }: RollProps) {
 				<sub>{roll.formula}</sub>	
 				<p>{
 					<>
-						{
-							roll.result.dice.map((die, index) =>
-								<React.Fragment key={index}>
-									<Die die={die} />
-									{index !== (roll.result.dice.length ?? 0)  - 1 && ", "}
-								</React.Fragment>)
+						{roll.result.dice.map((die, index) =>
+							<React.Fragment key={index}>
+								<Die die={die} />
+								{index !== (roll.result.dice.length ?? 0)  - 1 && ", "}
+							</React.Fragment>)
 						}
 						&nbsp;
 						<span className={styles.discarded} title="Discarded dice">
@@ -60,6 +72,12 @@ function Roll({ roll }: RollProps) {
 						</span>
 					</>
 				}</p>
+			</div>
+
+			<div className={styles.actions}>
+				<button onClick={playDeleteAnimation} title="Delete roll" className={styles.delete}>
+					<img src="./img/trash.svg" alt="Delete Roll" />
+				</button>
 			</div>
 		</div>
 	);

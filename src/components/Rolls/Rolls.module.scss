@@ -97,6 +97,33 @@
 			}
 		}
 	}
+
+	.actions {
+		--action-size: 2rem;
+		display: flex;
+		
+		margin-left: auto;
+
+		button {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			background-color: transparent;
+			border: none;
+
+			cursor: pointer;
+
+			img {
+				width: var(--action-size);
+				height: var(--action-size);
+			}
+		}
+	}
+
+	&[data-deleting="true"] {
+		animation: disappear ease forwards 1;
+	}
 }
 
 @keyframes appear {
@@ -109,3 +136,8 @@
 		transform: translateX(0);
 	}	
 } 
+
+@keyframes disappear {
+	from { opacity: 1; }
+	to { opacity: 0; }	
+}
