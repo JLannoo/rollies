@@ -11,6 +11,8 @@ import Header from "./components/Header/Header";
 import Rolls from "./components/Rolls/Rolls";
 import Input from "./components/Input/Input";
 
+import Dialog from "./components/Dialog/Dialog";
+
 import { useRollsStore } from "./stores/rolls";
 
 export default function App() {
@@ -61,6 +63,8 @@ export default function App() {
 				theme="colored"
 				hideProgressBar
 			/>
+			
+			<Dialog />
 		</>
 	);
 }

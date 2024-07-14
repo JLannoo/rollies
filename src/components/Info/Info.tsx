@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import styles from "./Info.module.scss";
-import text from "./Short.md?raw";
 
-import { parse } from "marked";
+import { loadShortMD } from "@/helpers/loadMD";
 
 export default function Info() {
+	const text = loadShortMD();
+
 	useEffect(() => {
-		const codeBlock = document.querySelectorAll("code");
+		const codeBlock = document.querySelectorAll(`.${styles.info} code`) as NodeListOf<HTMLElement>;
 		codeBlock.forEach((block) => {
 			block.style.cursor = "pointer";
 			block.addEventListener("click", () => {
@@ -14,15 +15,11 @@ export default function Info() {
 				copyFormulaToInput(formula);
 			});
 		});
-	}, [ text ]);
+	}, [ text ]);	
 
 	return (
 		<div className={styles.info}>
-			<div
-				dangerouslySetInnerHTML={{
-					__html: parse(text),
-				}}
-			/>
+			{ text }
 		</div>
 	);
 }
