@@ -121,10 +121,6 @@
 			}
 		}
 	}
-
-	&[data-deleting="true"] {
-		animation: disappear ease forwards 1;
-	}
 }
 
 @keyframes appear {
@@ -137,8 +133,3 @@
 		transform: translateX(0);
 	}	
 } 
-
-@keyframes disappear {
-	from { opacity: 1; }
-	to { opacity: 0; }	
-}
