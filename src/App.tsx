@@ -1,8 +1,8 @@
 import { FormEventHandler, useState } from "react";
 
-import { IllegalTokenError, Lexer } from "./parser/lexer";
-import { InvalidExpressionError, Parser } from "./parser/parser";
-import { Evaluator } from "./parser/evaluator";
+import { IllegalTokenError } from "./parser/lexer";
+import { InvalidExpressionError } from "./parser/parser";
+import { roll } from "./parser";
 
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -25,21 +25,16 @@ export default function App() {
 
 		const formData = new FormData(e.target as HTMLFormElement);
 		const object = Object.fromEntries(formData);
+		const string = object.input.toString();
 
 		try {
-			const tokens = new Lexer(object.input.toString()).tokenize();
-			const ast = new Parser(tokens).parse();
-			const values = new Evaluator(ast).evaluate();
+			const values = roll(string);
 
 			if (!values) {
-				toast.error("Invalid expression");
-				return;
+				return toast.error("Invalid expression");
 			}
 			
-			addResult({
-				formula: object.input.toString(),
-				result: values,
-			});
+			addResult({ formula: string, result: values });
 		} catch (error: unknown) {
 			if (error instanceof Error) {
 				if(error instanceof InvalidExpressionError) {
