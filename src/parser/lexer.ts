@@ -104,16 +104,18 @@ export class Lexer {
 			token = { position: this.position, type: TOKENS.SEPARATOR, value: this.char };
 			break;
 
-		default:
+		default: {
+			const start = this.position;
 			if(this.isNumber(char)) {
 				const number = this.readNumber();
 
-				token = { position: this.position, type: TOKENS.NUMBER, value: number };
+				token = { position: start, type: TOKENS.NUMBER, value: number };
 				return token;
 			}
 			
 			token = { position: this.position, type: TOKENS.ILLEGAL, value: this.char };
 			throw new IllegalTokenError(token);
+		}
 		}
 		
 		this.char = this.nextChar();
